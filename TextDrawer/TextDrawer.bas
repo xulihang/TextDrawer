@@ -18,6 +18,7 @@ Public Sub Initialize(p As B4XView)
 End Sub
 
 Public Sub Draw(text As String, width As Double,height As Double,options As TextDrawingOptions) As B4XBitmap
+	text = text.Replace("！"," ！ ")
 	If options.fitText Then
 		Dim data As Map
 		data.Initialize
@@ -217,22 +218,33 @@ Private Sub DrawImpl(text As String, width As Double,height As Double,options As
 			BBCodeView1.mBase.Visible = False
 			'mBase.AddView(BBCodeView1.mBase,0,0,-1,-1)
 		End If
+		
 		Dim parStyle As BCParagraphStyle
 		parStyle = engine.CreateStyle
-		parStyle.LineSpacingFactor = options.linespace
+		
 		parStyle.WordWrap = options.wordwrap
 		
+		If options.linespace <> -1 Then
+			parStyle.LineSpacingFactor = options.linespace
+		End If
 		If options.wordspace <> -1 Then
 			engine.SpaceBetweenCharacters = options.wordspace
 		End If
+		
+		If options.defaultFont.IsInitialized = False Then
+			options.defaultFont = BBCodeView1.ParseData.DefaultFont
+		End If
+		If options.defaultFont.IsInitialized Then
+			BBCodeView1.ParseData.DefaultFont = options.defaultFont
+		End If
+		
 		engine.KerningEnabled = options.kerningEnabled
 		BBCodeView1.RTL = options.RTL
 		BBCodeView1.mBase.Width = width
 		BBCodeView1.Style = parStyle
-		If options.defaultFont.IsInitialized Then
-			BBCodeView1.ParseData.DefaultFont = options.defaultFont
-		End If
+		
 		BBCodeView1.ParseData.DefaultColor = options.defaultColor
+		
 		BBCodeView1.Text = text
 		Dim targetWidth As Int  = BBCodeView1.ForegroundImageView.Width
 		Dim targetHeight As Int  = BBCodeView1.ForegroundImageView.Height

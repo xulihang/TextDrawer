@@ -42,19 +42,19 @@ Private Sub B4XPage_Created (Root1 As B4XView)
 	
 	options.kerningEnabled = True
 	If options.horizontal Then
-		options.wordspace = 1
+		options.wordspace = -1
 	Else
 		options.wordspace = 5
 	End If
+	options.linespace = -1
 	options.wordwrap = True
-	options.defaultFont = xui.CreateDefaultFont(15)
-	options.linespace = 1
+	'options.defaultFont = xui.CreateDefaultFont(15)
 	options.fitText = True
 	options.maxFontSize = 100
 	options.minFontSize = 15
     Dim drawer As TextDrawer
 	drawer.Initialize(p)
-	Dim bm As B4XBitmap = drawer.Draw("我爱我的祖国！阿萨德",150dip,50dip,options)
+	Dim bm As B4XBitmap = drawer.Draw("我爱我的祖国！阿萨德",250dip,50dip,options)
 	Log(bm.Width)
 	Log(bm.Height)
 	#if b4a
