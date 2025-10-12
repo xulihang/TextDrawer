@@ -41,7 +41,7 @@ Public Sub Draw(text As String, width As Double,height As Double,options As Text
 			f = options.defaultFont
 			desiredWidth = calculateMinimumWidth(textForCalculation,f)
 			Do While desiredWidth > width - 10
-				If f.Size >= Utils.getSetting("minFontSize",12) Then
+				If f.Size >= minFontSize Then
 					f = xui.CreateFont(options.defaultFont.ToNativeFont,f.Size - 1)
 					desiredWidth = calculateMinimumWidth(textForCalculation,f)
 				Else
