@@ -1012,28 +1012,32 @@ End Sub
 Private Sub FindMinRect (width As Int, height As Int) As B4XRect
 	Dim r As B4XRect
 	r.Initialize(width / 2, -1, -1, 0)
-	For y = 0 To height - 1
-		For x = 0 To width - 1
-			If CharBC.IsTransparent(x, y) = False Then
-				r.Left = Min(r.Left, x)
-				Exit
-			End If
-		Next
-		If x < width Then
-			If r.Top = -1 Then
-				r.Top = y
-			Else
-				r.Bottom = y + 1
-			End If
-			For x = width - 1 To 0 Step -1
+	Try
+		For y = 0 To height - 1
+			For x = 0 To width - 1
 				If CharBC.IsTransparent(x, y) = False Then
-					r.Right = Max(r.Right, x + 1)
+					r.Left = Min(r.Left, x)
 					Exit
 				End If
 			Next
-		End If
-	Next
-	r.Bottom = Max(r.Bottom, r.Top + 1)
+			If x < width Then
+				If r.Top = -1 Then
+					r.Top = y
+				Else
+					r.Bottom = y + 1
+				End If
+				For x = width - 1 To 0 Step -1
+					If CharBC.IsTransparent(x, y) = False Then
+						r.Right = Max(r.Right, x + 1)
+						Exit
+					End If
+				Next
+			End If
+		Next
+		r.Bottom = Max(r.Bottom, r.Top + 1)
+	Catch
+		Log(LastException)
+	End Try
 	Return r
 End Sub
 
