@@ -38,7 +38,7 @@ Private Sub B4XPage_Created (Root1 As B4XView)
 	Dim options As TextDrawingOptions
 	options.Initialize
 	options.defaultColor = xui.Color_Blue
-	options.horizontal = True
+	options.horizontal = False
 	
 	options.kerningEnabled = True
 	If options.horizontal Then

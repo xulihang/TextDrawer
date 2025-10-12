@@ -250,6 +250,9 @@ Private Sub DrawImpl(text As String, width As Double,height As Double,options As
 		Dim targetHeight As Int  = BBCodeView1.ForegroundImageView.Height
 		Return BBCodeView1.ForegroundImageView.GetBitmap.Resize(targetWidth,targetHeight,True)
 	Else
+		If options.defaultFont.IsInitialized = False Then
+			options.defaultFont = xui.CreateDefaultFont(15)
+		End If
 		Dim vte As VerticalTextEngine
 		vte.Initialize
 		Return vte.Draw(mBase,text,options.defaultFont,options.fontname,options.defaultColor,False,False,options.wordspace,options.linespace,0,options.wordwrap,width,height,False,"",0)
