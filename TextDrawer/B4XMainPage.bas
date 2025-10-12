@@ -54,7 +54,7 @@ Private Sub B4XPage_Created (Root1 As B4XView)
 	options.minFontSize = 15
     Dim drawer As TextDrawer
 	drawer.Initialize(p)
-	Dim bm As B4XBitmap = drawer.Draw("I love my country!",150dip,150dip,options)
+	Dim bm As B4XBitmap = drawer.Draw("我爱我的祖国！阿萨德",150dip,50dip,options)
 	Log(bm.Width)
 	Log(bm.Height)
 	#if b4a

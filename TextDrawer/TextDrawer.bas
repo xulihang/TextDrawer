@@ -28,25 +28,28 @@ Public Sub Draw(text As String, width As Double,height As Double,options As Text
 		AutoAdjustFont(text,data,width,height,options,minFontSize,maxFontSize,"")
 		img = data.Get("img")
 		
-		Dim desiredWidth As Int
-		Dim textForCalculation As String = text
-		If text.Contains(" ") Then
-			textForCalculation = textForCalculation & " "
-		End If
-		Dim f As B4XFont
-		f = options.defaultFont
-		desiredWidth = calculateMinimumWidth(textForCalculation,f)
-		Do While desiredWidth > width - 10
-			If f.Size >= Utils.getSetting("minFontSize",12) Then
-				f = xui.CreateFont(options.defaultFont.ToNativeFont,f.Size - 1)
-				desiredWidth = calculateMinimumWidth(textForCalculation,f)
-			Else
-				width = desiredWidth
-				Exit
+		If Utils.isChinese(text) = False And Utils.isJapanese(text) = False Then
+			Dim desiredWidth As Int
+			Dim textForCalculation As String = text
+			If text.Contains(" ") Then
+				textForCalculation = textForCalculation & " "
 			End If
-		Loop
-		options.defaultFont = f
-		img = DrawImpl(text, width,height, options)
+			Dim f As B4XFont
+			f = options.defaultFont
+			desiredWidth = calculateMinimumWidth(textForCalculation,f)
+			Do While desiredWidth > width - 10
+				If f.Size >= Utils.getSetting("minFontSize",12) Then
+					f = xui.CreateFont(options.defaultFont.ToNativeFont,f.Size - 1)
+					desiredWidth = calculateMinimumWidth(textForCalculation,f)
+				Else
+					width = desiredWidth
+					Exit
+				End If
+			Loop
+			options.defaultFont = f
+			img = DrawImpl(text, width,height, options)
+		End If
+		
 		Return img
 	Else
 		Return DrawImpl(text, width,height, options)
