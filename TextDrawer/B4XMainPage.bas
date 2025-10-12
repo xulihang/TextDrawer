@@ -38,7 +38,7 @@ Private Sub B4XPage_Created (Root1 As B4XView)
 	Dim options As TextDrawingOptions
 	options.Initialize
 	options.defaultColor = xui.Color_Blue
-	options.horizontal = False
+	options.horizontal = True
 	
 	options.kerningEnabled = True
 	If options.horizontal Then
@@ -47,14 +47,14 @@ Private Sub B4XPage_Created (Root1 As B4XView)
 		options.wordspace = 5
 	End If
 	options.wordwrap = True
-	options.defaultFont = xui.CreateDefaultFont(20)
+	options.defaultFont = xui.CreateDefaultFont(15)
 	options.linespace = 1
 	options.fitText = True
 	options.maxFontSize = 100
 	options.minFontSize = 15
     Dim drawer As TextDrawer
 	drawer.Initialize(p)
-	Dim bm As B4XBitmap = drawer.Draw("我爱我的祖国！……",100,100,options)
+	Dim bm As B4XBitmap = drawer.Draw("I love my country!",150dip,150dip,options)
 	Log(bm.Width)
 	Log(bm.Height)
 	#if b4a
