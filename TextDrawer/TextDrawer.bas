@@ -8,8 +8,8 @@ Sub Class_Globals
 	Private mBase As B4XView
 	Private BBCodeView1 As BBCodeView
 	Private engine As BCTextEngine
-	Private vte As VerticalTextEngine
-	Type TextDrawingOptions (defaultFont As B4XFont, defaultColor As Int, fontname As String, horizontal As Boolean, wordspace As Int, linespace As Double, kerningEnabled As Boolean, RTL As Boolean, wordwrap As Boolean)
+	Private xui As XUI
+	Type TextDrawingOptions (fitText As Boolean,minFontSize As Int, maxFontSize As Int,defaultFont As B4XFont, defaultColor As Int, fontname As String, horizontal As Boolean, wordspace As Int, linespace As Double, kerningEnabled As Boolean, RTL As Boolean, wordwrap As Boolean)
 End Sub
 
 'Initializes the object. You can add parameters to this method if needed.
@@ -18,6 +18,155 @@ Public Sub Initialize(p As B4XView)
 End Sub
 
 Public Sub Draw(text As String, width As Double,height As Double,options As TextDrawingOptions) As B4XBitmap
+	If options.fitText Then
+		Dim data As Map
+		data.Initialize
+		Dim minFontSize As Int=options.minFontSize
+		Dim maxFontSize As Int=options.maxFontSize
+		Dim img As B4XBitmap = DrawImpl(text, width,height, options)
+		data.Put("img",img)
+		AutoAdjustFont(text,data,width,height,options,minFontSize,maxFontSize,"")
+		Return data.Get("img")
+	Else
+		Return DrawImpl(text, width,height, options)
+	End If
+End Sub
+
+
+private Sub AutoAdjustFont(text As String,data As Map,width As Int,height As Int,options As TextDrawingOptions,minFontSize As Int,maxFontSize As Int,previousStatus As String)
+    Dim img As B4XBitmap = data.Get("img")
+	Dim fixedRect As B4XRect
+	fixedRect.Initialize(0,0,options.defaultFont.Size,options.defaultFont.Size)
+	Dim diff As Int 
+	If options.horizontal Then
+		diff = Abs(width - img.Width)
+	Else
+		diff = Abs(height - img.Height)
+	End If
+	If options.horizontal Then
+		If height - img.Height > fixedRect.Height*0.5 Then
+			Log("make it bigger")
+			If previousStatus = "shrink" Then
+				Return
+			End If
+
+			Dim plus As Int = 1
+
+			If diff > fixedRect.Height Then
+				plus = 5
+				If options.defaultFont.Size + plus > maxFontSize Then
+					plus = 1
+				End If
+			End If
+		
+			If options.defaultFont.Size + plus > maxFontSize Then
+				Log("will exceed max font size")
+				Return
+			End If
+			img = DrawImpl(text, width, height, options)
+			data.Put("img",img)
+			If img.Height - height > 0 Then
+				Dim newSize As Int = options.defaultFont.Size-plus
+				options.defaultFont = xui.CreateFont(options.defaultFont,newSize)
+				img = DrawImpl(text, width,height, options)
+				data.Put("img",img)
+				Log("already exceed height")
+				Return
+			End If
+			Dim newSize As Int = options.defaultFont.Size+plus
+			options.defaultFont = xui.CreateFont(options.defaultFont,newSize)
+			AutoAdjustFont(text,data,width,height,options,minFontSize,maxFontSize,"enlarge")
+		else if img.Height - height > 0 Then
+			Log("make it smaller")
+			If previousStatus = "enlarge" Then
+				Return
+			End If
+
+			Dim minus As Int = 1
+		
+			If diff > fixedRect.Height Then
+				minus = 5
+				If options.defaultFont.Size  - minus < minFontSize Then
+					minus = 1
+				End If
+			End If
+
+			img = DrawImpl(text, width,height, options)
+			data.Put("img",img)
+			If options.defaultFont.Size - minus < minFontSize Then
+				Log("will lower than min font size")
+				Return
+			End If
+			Dim newSize As Int = options.defaultFont.Size-minus
+			options.defaultFont = xui.CreateFont(options.defaultFont,newSize)
+			AutoAdjustFont(text,data,width,height,options,minFontSize,maxFontSize,"shrink")
+		Else
+			Log("stop")
+		End If
+	Else
+		If width - img.Width > fixedRect.Width*0.5 Then
+			Log("make it bigger")
+			If previousStatus = "shrink" Then
+				Return
+			End If
+
+			Dim plus As Int = 1
+
+			If diff > fixedRect.Width Then
+				plus = 5
+				If options.defaultFont.Size + plus > maxFontSize Then
+					plus = 1
+				End If
+			End If
+		
+			If options.defaultFont.Size + plus > maxFontSize Then
+				Log("will bigger than max font size")
+				Return
+			End If
+			img = DrawImpl(text, width,height, options)
+			data.Put("img",img)
+			If img.Width - width > 0 Then
+				Dim newSize As Int = options.defaultFont.Size-plus
+				options.defaultFont = xui.CreateFont(options.defaultFont,newSize)
+				img = DrawImpl(text, width,height, options)
+				data.Put("img",img)
+				Log("already exceed width")
+				Return
+			End If
+			Dim newSize As Int = options.defaultFont.Size+plus
+			options.defaultFont = xui.CreateFont(options.defaultFont,newSize)
+			AutoAdjustFont(text,data,width,height,options,minFontSize,maxFontSize,"enlarge")
+		else if img.Width - width > 0 Then
+			Log("make it smaller")
+			If previousStatus = "enlarge" Then
+				Return
+			End If
+
+			Dim minus As Int = 1
+		
+			If diff > fixedRect.Width Then
+				minus = 5
+				If options.defaultFont.Size  - minus < minFontSize Then
+					minus = 1
+				End If
+			End If
+
+			img = DrawImpl(text, width,height, options)
+			data.Put("img",img)
+			If options.defaultFont.Size - minus < minFontSize Then
+				Log("will lower than min font size")
+				Return
+			End If
+			Dim newSize As Int = options.defaultFont.Size-minus
+			options.defaultFont = xui.CreateFont(options.defaultFont,newSize)
+			AutoAdjustFont(text,data,width,height,options,minFontSize,maxFontSize,"shrink")
+		Else
+			Log("stop")
+		End If
+	End If
+End Sub
+
+Private Sub DrawImpl(text As String, width As Double,height As Double,options As TextDrawingOptions) As B4XBitmap
 	If options.horizontal Then
 		If BBCodeView1.IsInitialized = False Then
 			BBCodeView1.Initialize(Me,"")
@@ -55,10 +204,8 @@ Public Sub Draw(text As String, width As Double,height As Double,options As Text
 		Dim targetHeight As Int  = BBCodeView1.ForegroundImageView.Height
 		Return BBCodeView1.ForegroundImageView.GetBitmap.Resize(targetWidth,targetHeight,True)
 	Else
-		If vte.IsInitialized = False Then
-			vte.Initialize
-		End If
-		Dim xui As XUI
+		Dim vte As VerticalTextEngine
+		vte.Initialize
 		Return vte.Draw(mBase,text,options.defaultFont,options.fontname,options.defaultColor,False,False,options.wordspace,options.linespace,0,options.wordwrap,width,height,False,"",0)
 	End If
 End Sub

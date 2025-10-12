@@ -16,12 +16,11 @@ Module3=|relative|..\BBCodeView
 Module4=|relative|..\BCTextEngine
 Module5=|relative|..\SimpleBBCodeParser
 Module6=|relative|..\TextDrawer
-Module7=|relative|..\TextEngine
-Module8=|relative|..\Utils
-Module9=|relative|..\VerticalTextEngine
+Module7=|relative|..\Utils
+Module8=|relative|..\VerticalTextEngine
 NumberOfFiles=1
 NumberOfLibraries=7
-NumberOfModules=9
+NumberOfModules=8
 Version=10
 @EndOfDesignText@
 #Region Project Attributes 
