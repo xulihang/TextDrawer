@@ -18,7 +18,9 @@ Public Sub Initialize(p As B4XView)
 End Sub
 
 Public Sub Draw(text As String, width As Double,height As Double,options As TextDrawingOptions) As B4XBitmap
-	text = text.Replace("！"," ！ ")
+	If options.horizontal Then
+		text = text.Replace("！"," ！ ")
+	End If
 	If options.fitText Then
 		Dim data As Map
 		data.Initialize
