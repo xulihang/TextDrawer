@@ -16,17 +16,18 @@ Library5=json
 Library6=okhttputils2
 ManifestCode='This code will be applied to the manifest file during compilation.~\n~'You do not need to modify it in most cases.~\n~'See this link for for more information: https://www.b4x.com/forum/showthread.php?p=78136~\n~AddManifestText(~\n~<uses-sdk android:minSdkVersion="21" android:targetSdkVersion="35"/>~\n~<supports-screens android:largeScreens="true" ~\n~    android:normalScreens="true" ~\n~    android:smallScreens="true" ~\n~    android:anyDensity="true"/>)~\n~SetApplicationAttribute(android:icon, "@drawable/icon")~\n~SetApplicationAttribute(android:label, "$LABEL$")~\n~CreateResourceFromFile(Macro, Themes.LightTheme)~\n~'End of default text.~\n~
 Module1=|relative|..\B4XMainPage
+Module10=|relative|..\VerticalTextEngine
 Module2=|relative|..\BBCodeParser
 Module3=|relative|..\BBCodeView
 Module4=|relative|..\BCTextEngine
-Module5=|relative|..\SimpleBBCodeParser
-Module6=Starter
-Module7=|relative|..\TextDrawer
-Module8=|relative|..\Utils
-Module9=|relative|..\VerticalTextEngine
+Module5=|relative|..\EnumClass
+Module6=|relative|..\SimpleBBCodeParser
+Module7=Starter
+Module8=|relative|..\TextDrawer
+Module9=|relative|..\Utils
 NumberOfFiles=4
 NumberOfLibraries=6
-NumberOfModules=9
+NumberOfModules=10
 Version=13.4
 @EndOfDesignText@
 #Region  Project Attributes 

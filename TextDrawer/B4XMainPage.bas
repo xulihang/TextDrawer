@@ -15,6 +15,7 @@ Sub Class_Globals
 	Private Root As B4XView
 	Private xui As XUI
 	Private ImageView1 As ImageView
+	Private Label1 As Label
 End Sub
 
 Public Sub Initialize
@@ -37,8 +38,9 @@ Private Sub B4XPage_Created (Root1 As B4XView)
 
 	Dim options As TextDrawingOptions
 	options.Initialize
-	options.defaultColor = xui.Color_Blue
-	options.horizontal = False
+	options.defaultColor = xui.Color_Black
+	options.defaultStrokeColor = xui.Color_Blue
+	options.horizontal = True
 	
 	options.kerningEnabled = True
 	If options.horizontal Then
@@ -54,18 +56,24 @@ Private Sub B4XPage_Created (Root1 As B4XView)
 	options.minFontSize = 15
     Dim drawer As TextDrawer
 	drawer.Initialize(p)
-	Dim bm As B4XBitmap = drawer.Draw("我爱我的祖国！阿萨德",150dip,200dip,options)
+	Dim bm As B4XBitmap = drawer.Draw("Stroked text.",150dip,200dip,options)
 	Log(bm.Width)
 	Log(bm.Height)
+	
 	#if b4a
 	ImageView1.Bitmap = bm
 	ImageView1.SetLayout(ImageView1.Left,ImageView1.Top,bm.Width,bm.Height)
+
 	#End If
 	#if b4j
 	ImageView1.SetImage(bm)
 	Sleep(0)
 	ImageView1.SetSize(bm.Width,bm.Height)
 	#End If
+End Sub
+
+Private Sub SetShadow(View As B4XView, Radius As Float, dx As Float, dy As Float, Color As Int)
+	View.As(JavaObject).RunMethod("setShadowLayer", Array(Radius, dx, dy, Color))
 End Sub
 
 'You can see the list of page related events in the B4XPagesManager object. The event name is B4XPage.

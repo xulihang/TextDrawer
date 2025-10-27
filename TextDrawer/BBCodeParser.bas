@@ -8,7 +8,7 @@ Sub Class_Globals
 	Type BBCodeTextNode (Text As String, Tags As List)
 	Type BBCodeTagNode (Tag As String, Extra As Map, CanHaveNestedTags As Boolean)
 	Type BBCodeParseData (Text As String, URLs As Map, Width As Int, ViewsPanel As B4XView, Views As Map, NeedToReparseWhenResize As Boolean, _
-		ImageCache As Map, DefaultBoldFont As B4XFont, DefaultFont As B4XFont, DefaultColor As Int, UrlColor As Int)
+		ImageCache As Map, DefaultBoldFont As B4XFont, DefaultFont As B4XFont, DefaultColor As Int,DefaultStrokeColor As Int, UrlColor As Int)
 	Private AllowedTags As B4XSet
 	Private Stack As List
 	Private Start As Int
@@ -199,6 +199,7 @@ Private Sub TextToRun (Text As BBCodeTextNode, RunsList As List, Data As BBCodeP
 	Dim Run As BCTextRun = mTextEngine.CreateRun(Text.Text)
 	Run.TextColor = Data.DefaultColor
 	Run.TextFont = Data.DefaultFont
+	Run.StrokeColor = Data.DefaultStrokeColor
 	Dim customfont As Boolean
 	Dim FontSize As Int = Data.DefaultFont.Size
 	Dim CurrentFont As B4XFont = Data.DefaultFont
@@ -365,7 +366,7 @@ Private Sub HandleListElement (Text As BBCodeTextNode, Run As BCTextRun) As BCTe
 				Dim cr As BCConnectedRuns = parent.Extra.Get(mTextEngine.EXTRA_CONNECTEDRUNS)
 				cr.Runs.Add(Run)
 				cr.Alignment = "right"
-				cr.ConnectedWidth = mTextEngine.GetFontMetrics(Run.TextFont, Run.TextColor).xWidth * 3 / mTextEngine.mScale
+				cr.ConnectedWidth = mTextEngine.GetFontMetrics(Run.TextFont, Run.TextColor, Run.StrokeColor).xWidth * 3 / mTextEngine.mScale
 				parent.IndentLevel = Run.IndentLevel
 				Run = parent
 				count = count + 1

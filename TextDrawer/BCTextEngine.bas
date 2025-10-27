@@ -8,12 +8,12 @@ Sub Class_Globals
 	Private xui As XUI
 	Public cvs As B4XCanvas
 	Type BCFontMetrics (Glyphs As Map, DefaultColorMetrics As BCFontMetrics, xWidth As Int, _
-		Fnt As B4XFont, Clr As Int, KerningTable As Map)
+		Fnt As B4XFont, Clr As Int, KerningTable As Map,StrokeClr As Int)
 	Type BCTextChars (Buffer() As String, StartIndex As Int, Length As Int)
 	'input
 	Type BCParagraphStyle (HorizontalAlignment As String, LineSpacingFactor As Float, MaxWidth As Int, Padding As B4XRect, WordWrap As Boolean, _
 		ResizeHeightAutomatically As Boolean, RTL As Boolean)
-	Type BCTextRun (TextFont As B4XFont, TextColor As Int, Text As String, TextChars As BCTextChars, CharacterSpacingFactor As Float, _
+	Type BCTextRun (TextFont As B4XFont, StrokeColor As Int,TextColor As Int, Text As String, TextChars As BCTextChars, CharacterSpacingFactor As Float, _
 		VerticalOffset As Int, Underline As Boolean, AutoUnderline As Boolean, BackgroundColor As Int, _
 		IndentLevel As Int, View As B4XView, HorizontalAlignment As String, Tag As Object, Extra As Map, TextDirection As Int)
 	Type BCConnectedRuns (ConnectedWidth As Int, Runs As List, Alignment As String)
@@ -41,6 +41,8 @@ Sub Class_Globals
 	Private FontMetricsCache As Map
 	Private ForegroundBC, BackgroundBC As BitmapCreator 'ignore
 	Public DefaultColor As Int = xui.Color_Black
+	'0 means no stroke
+	Public DefaultStrokeColor As Int = 0
 	Public WordBoundaries As String = "&*+-/.<>=\' ,:{}" & TAB & CRLF & Chr(13)
 	Public WordBoundariesThatCanConnectToPrevWord As String = ".,:"
 	Private Brushes As Map
@@ -163,6 +165,7 @@ Public Sub CreateRun (Text As String) As BCTextRun
 	r.TextChars = CreateBCTextCharsFromString(Text)
 	r.Text = Text
 	r.TextColor = DefaultColor
+	r.StrokeColor = DefaultStrokeColor
 	Return r
 End Sub
 
@@ -181,7 +184,7 @@ Private Sub Prepare (Runs As List, Style As BCParagraphStyle) As BCParagraph
 	par.Initialize
 	par.TextLines.Initialize
 	par.Style = Style
-	IndentWidth = GetFontMetrics(DefaultFont, DefaultColor).xWidth * TabWidthMeasuredInX
+	IndentWidth = GetFontMetrics(DefaultFont, DefaultColor, DefaultStrokeColor).xWidth * TabWidthMeasuredInX
 	Dim unbreakeables As List
 	unbreakeables.Initialize
 	For Each run As BCTextRun In Runs
@@ -446,7 +449,7 @@ Private Sub HandleConnectedTextRuns (Run As BCTextRun, Unbreakables As List, Sty
 		un.IsMergable = True
 		width = width + un.Width
 	Next
-	Dim fm As BCFontMetrics = GetFontMetrics(Run.TextFont, Run.TextColor)
+	Dim fm As BCFontMetrics = GetFontMetrics(Run.TextFont, Run.TextColor, Run.StrokeColor)
 	Dim ConnectedWidth As Int = cr.ConnectedWidth * mScale
 	
 	Dim u As BCUnbreakableText = children.Get(0)
@@ -473,7 +476,7 @@ Private Sub HandleConnectedTextRuns (Run As BCTextRun, Unbreakables As List, Sty
 End Sub
 
 Private Sub HandleTextRun (Run As BCTextRun, Unbreakables As List, style As BCParagraphStyle)
-	Dim fm As BCFontMetrics = GetFontMetrics(Run.TextFont, Run.TextColor)
+	Dim fm As BCFontMetrics = GetFontMetrics(Run.TextFont, Run.TextColor, Run.StrokeColor)
 	Dim i1 As Int
 	For i = 0 To Run.TextChars.Length - 1
 		Dim c As String = Run.TextChars.Buffer(Run.TextChars.StartIndex + i)
@@ -832,7 +835,7 @@ Private Sub GetBrush(clr As Int) As BCBrush
 End Sub
 
 
-Public Sub GetFontMetrics(Fnt As B4XFont, clr As Int) As BCFontMetrics
+Public Sub GetFontMetrics(Fnt As B4XFont, clr As Int, strokeClr As Int) As BCFontMetrics
 	Dim key As String = FontToKey(Fnt, clr)
 	If FontMetricsCache.ContainsKey(key) Then Return FontMetricsCache.Get(key)
 	Dim fm As BCFontMetrics
@@ -840,12 +843,13 @@ Public Sub GetFontMetrics(Fnt As B4XFont, clr As Int) As BCFontMetrics
 	fm.Glyphs.Initialize
 	fm.Clr = clr
 	fm.Fnt = Fnt
+	fm.StrokeClr = strokeClr
 	If clr = DefaultColor Then
 		fm.KerningTable.Initialize
 		fm.DefaultColorMetrics = fm
 		fm.xWidth = CreateGlyph("x", fm, False).Width
 	Else
-		fm.DefaultColorMetrics = GetFontMetrics(Fnt, DefaultColor)
+		fm.DefaultColorMetrics = GetFontMetrics(Fnt, DefaultColor, DefaultStrokeColor)
 		fm.xWidth = fm.DefaultColorMetrics.xWidth
 		fm.KerningTable = fm.DefaultColorMetrics.KerningTable
 	End If
@@ -871,7 +875,13 @@ Private Sub CreateGlyph (c As String, FontMetrics As BCFontMetrics, JustMeasure 
 		End If
 '	cvs.DrawRect(cvs.TargetRect, xui.Color_Yellow, True, 0)
 		Dim leftOffset As Int = 5
-		cvs.DrawText(c, leftOffset, BaseLine, FontMetrics.Fnt, FontMetrics.clr, "LEFT")
+		
+		If FontMetrics.StrokeClr <> 0 Then
+			DrawTextWithStroke(c, leftOffset, BaseLine, FontMetrics.Fnt, FontMetrics.Clr,FontMetrics.StrokeClr, "LEFT", 10)
+		Else
+			cvs.DrawText(c, leftOffset, BaseLine, FontMetrics.Fnt, FontMetrics.clr, "LEFT")
+		End If
+		
 		#if B4A		
 		Dim bmp As B4XBitmap = cvs.CreateBitmap
 		#else if B4J
@@ -925,6 +935,49 @@ Private Sub CreateGlyph (c As String, FontMetrics As BCFontMetrics, JustMeasure 
 		End If
 		Return g
 	End If
+End Sub
+
+Private Sub DrawTextWithStroke(text As String,x As Float,y As Float,f As B4XFont,color As Int,strokeColor As Int,alignment As Object,stroke As Float)
+	Dim B4XCVSWrapper As JavaObject = cvs
+	Dim cvsWrapper As JavaObject = B4XCVSWrapper.GetField("cvs")
+	Dim nativeCVS As JavaObject = cvsWrapper.GetField("canvas")
+	'Dim nativePaint As JavaObject = cvsWrapper.GetField("paint")
+	
+	cvsWrapper.RunMethod("checkAndSetTransparent",Array(color))
+	
+	Dim ctx As JavaObject
+	ctx.InitializeContext
+	Dim scale As Float =  ctx.RunMethodJO("getResources",Null).RunMethodJO("getDisplayMetrics",Null).GetField("scaledDensity")
+	Dim size As Float = f.Size * scale
+
+	Dim Style As EnumClass
+	Style.Initialize("android.graphics.Paint.Style")
+	
+	Dim fillPaint As JavaObject
+	fillPaint.InitializeNewInstance("android.graphics.Paint", Null)
+	fillPaint.RunMethod("setAntiAlias", Array(True))
+	fillPaint.RunMethod("setTextAlign", Array(alignment))
+	fillPaint.RunMethod("setTextSize", Array(size))
+	fillPaint.RunMethod("setTypeface", Array(f.ToNativeFont))
+	fillPaint.RunMethod("setColor", Array(color))
+	fillPaint.RunMethod("setStyle", Array(Style.ValueOf("FILL")))
+	
+	'Dim aa As Boolean = nativePaint.RunMethod("isAntiAlias",Null)
+	
+	Dim strokePaint As JavaObject
+	strokePaint.InitializeNewInstance("android.graphics.Paint", Null)
+	strokePaint.RunMethod("setAntiAlias", Array(True))
+	strokePaint.RunMethod("setTextAlign", Array(alignment))
+	strokePaint.RunMethod("setTextSize", Array(size))
+	strokePaint.RunMethod("setTypeface", Array(f.ToNativeFont))
+	strokePaint.RunMethod("setColor", Array(strokeColor))
+	strokePaint.RunMethod("setStrokeWidth", Array(stroke))
+	strokePaint.RunMethod("setStyle", Array(Style.ValueOf("STROKE")))
+
+	nativeCVS.RunMethod("drawText", Array(text, x, y, strokePaint))
+	nativeCVS.RunMethod("drawText", Array(text, x, y, fillPaint))
+	
+	'nativePaint.RunMethod("setAntiAlias",Array(aa))
 End Sub
 
 Private Sub RecolorEdgesOfConnectedCharacters(c As String, r2 As B4XRect)

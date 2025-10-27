@@ -9,7 +9,7 @@ Sub Class_Globals
 	Private BBCodeView1 As BBCodeView
 	Private engine As BCTextEngine
 	Private xui As XUI
-	Type TextDrawingOptions (fitText As Boolean,minFontSize As Int, maxFontSize As Int,defaultFont As B4XFont, defaultColor As Int, fontname As String, horizontal As Boolean, wordspace As Int, linespace As Double, kerningEnabled As Boolean, RTL As Boolean, wordwrap As Boolean)
+	Type TextDrawingOptions (fitText As Boolean,minFontSize As Int, maxFontSize As Int,defaultFont As B4XFont, defaultColor As Int, defaultStrokeColor As Int, fontname As String, horizontal As Boolean, wordspace As Int, linespace As Double, kerningEnabled As Boolean, RTL As Boolean, wordwrap As Boolean)
 End Sub
 
 'Initializes the object. You can add parameters to this method if needed.
@@ -246,6 +246,7 @@ Private Sub DrawImpl(text As String, width As Double,height As Double,options As
 		BBCodeView1.Style = parStyle
 		
 		BBCodeView1.ParseData.DefaultColor = options.defaultColor
+		BBCodeView1.ParseData.DefaultStrokeColor = options.defaultStrokeColor
 		
 		BBCodeView1.Text = text
 		Dim targetWidth As Int  = BBCodeView1.ForegroundImageView.Width
