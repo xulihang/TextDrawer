@@ -40,8 +40,8 @@ Public Sub Initialize
 	mReplacingMap = json.NextObject
 End Sub
 
-Public Sub Draw(parent As B4XView,text As String,f As B4XFont,fontname As String,color As Int,bold As Boolean,italic As Boolean,wordspace As Int,linespace As Double,padding As Int,wrap As Boolean,boxWidth As Int,boxHeight As Int, left2right As Boolean, style As String,rotation As Int) As B4XBitmap
-	Dim bitmap As B4XBitmap = Draw2(parent,text,f,fontname,color,bold,italic,wordspace,linespace,padding,wrap,boxWidth,boxHeight,left2right,rotation)
+Public Sub Draw(parent As B4XView,text As String,f As B4XFont,fontname As String,color As Int,bold As Boolean,italic As Boolean,wordspace As Int,linespace As Double,padding As Int,wrap As Boolean,boxWidth As Int,boxHeight As Int, left2right As Boolean, style As String,rotation As Int,alignment As Int) As B4XBitmap
+	Dim bitmap As B4XBitmap = Draw2(parent,text,f,fontname,color,bold,italic,wordspace,linespace,padding,wrap,boxWidth,boxHeight,left2right,rotation,alignment)
 	If style <> "" Then
 		Dim xIv As B4XView
 		Dim iv As ImageView
@@ -92,7 +92,7 @@ Public Sub Draw(parent As B4XView,text As String,f As B4XFont,fontname As String
 	End If
 End Sub
 
-Private Sub Draw2(parent As B4XView,text As String,f As B4XFont,fontname As String,color As Int,bold As Boolean,italic As Boolean,wordspace As Int,linespace As Double,padding As Int,wrap As Boolean,boxWidth As Int,boxHeight As Int, left2right As Boolean,rotation As Int) As B4XBitmap
+Private Sub Draw2(parent As B4XView,text As String,f As B4XFont,fontname As String,color As Int,bold As Boolean,italic As Boolean,wordspace As Int,linespace As Double,padding As Int,wrap As Boolean,boxWidth As Int,boxHeight As Int, left2right As Boolean,rotation As Int,alignment As Int) As B4XBitmap
 	Dim cvs1 As B4XCanvas
 	cvs1.Initialize(parent)
 	If rotation <> 0 Then
@@ -278,6 +278,20 @@ Private Sub Draw2(parent As B4XView,text As String,f As B4XFont,fontname As Stri
 			offsetY = fr.Height - firstChar.rect.Height - fr.CenterY + wordspace
 			If offsetY > 0 Then
 				offsetY = 0
+			End If
+		End If
+		
+		'alignment: 0 left, 1 center, 2 right 
+		If alignment <> 0 Then
+			Dim charsHeight As Int
+			For Each img As B4XBitmap In textImages
+			    'Dim charItem As VerticalTextEngineChar = MapOfCharAndImage.get(img)
+				charsHeight = charsHeight + img.Height
+			Next
+			If alignment = 1 Then
+				offsetY = offsetY + Max(0,(height - charsHeight)) / 2
+			else if alignment = 2 Then
+				offsetY = offsetY + Max(0,height - charsHeight)
 			End If
 		End If
 		

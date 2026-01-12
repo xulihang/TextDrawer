@@ -54,6 +54,7 @@ Private Sub B4XPage_Created (Root1 As B4XView)
 	options.fitText = True
 	options.maxFontSize = 100
 	options.minFontSize = 15
+	options.alignment = 1
     Dim drawer As TextDrawer
 	drawer.Initialize(p)
 	Dim bm As B4XBitmap = drawer.Draw("竖排文本",150dip,200dip,options)

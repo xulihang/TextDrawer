@@ -9,7 +9,7 @@ Sub Class_Globals
 	Private BBCodeView1 As BBCodeView
 	Private engine As BCTextEngine
 	Private xui As XUI
-	Type TextDrawingOptions (fitText As Boolean,minFontSize As Int, maxFontSize As Int,defaultFont As B4XFont, defaultColor As Int, defaultStrokeColor As Int, fontname As String, horizontal As Boolean, wordspace As Int, linespace As Double, kerningEnabled As Boolean, RTL As Boolean, wordwrap As Boolean)
+	Type TextDrawingOptions (fitText As Boolean,minFontSize As Int, maxFontSize As Int,defaultFont As B4XFont, defaultColor As Int, defaultStrokeColor As Int, fontname As String, horizontal As Boolean, wordspace As Int, linespace As Double, kerningEnabled As Boolean, RTL As Boolean, wordwrap As Boolean,alignment As Int)
 End Sub
 
 'Initializes the object. You can add parameters to this method if needed.
@@ -239,7 +239,7 @@ Private Sub DrawImpl(text As String, width As Double,height As Double,options As
 		If options.defaultFont.IsInitialized Then
 			BBCodeView1.ParseData.DefaultFont = options.defaultFont
 		End If
-		
+
 		engine.KerningEnabled = options.kerningEnabled
 		BBCodeView1.RTL = options.RTL
 		BBCodeView1.mBase.Width = width
@@ -264,6 +264,6 @@ Private Sub DrawImpl(text As String, width As Double,height As Double,options As
 		End If
 		Dim vte As VerticalTextEngine
 		vte.Initialize
-		Return vte.Draw(mBase,text,options.defaultFont,options.fontname,options.defaultColor,False,False,options.wordspace,options.linespace,0,options.wordwrap,width,height,False,"",0)
+		Return vte.Draw(mBase,text,options.defaultFont,options.fontname,options.defaultColor,False,False,options.wordspace,options.linespace,0,options.wordwrap,width,height,False,"",0,options.alignment)
 	End If
 End Sub
