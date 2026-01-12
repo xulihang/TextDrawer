@@ -225,6 +225,14 @@ Private Sub DrawImpl(text As String, width As Double,height As Double,options As
 		parStyle = engine.CreateStyle
 		
 		parStyle.WordWrap = options.wordwrap
+		Select options.alignment
+			Case 0
+				parStyle.HorizontalAlignment = "Left"
+			Case 1
+				parStyle.HorizontalAlignment = "Center"
+			Case 2
+				parStyle.HorizontalAlignment = "Right"
+		End Select
 		
 		If options.linespace <> -1 Then
 			parStyle.LineSpacingFactor = options.linespace
