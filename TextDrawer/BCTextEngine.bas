@@ -876,11 +876,16 @@ Private Sub CreateGlyph (c As String, FontMetrics As BCFontMetrics, JustMeasure 
 '	cvs.DrawRect(cvs.TargetRect, xui.Color_Yellow, True, 0)
 		Dim leftOffset As Int = 5
 		
+		#if b4a
 		If FontMetrics.StrokeClr <> 0 Then
 			DrawTextWithStroke(c, leftOffset, BaseLine, FontMetrics.Fnt, FontMetrics.Clr,FontMetrics.StrokeClr, "LEFT", 10)
 		Else
 			cvs.DrawText(c, leftOffset, BaseLine, FontMetrics.Fnt, FontMetrics.clr, "LEFT")
 		End If
+	    #else
+		cvs.DrawText(c, leftOffset, BaseLine, FontMetrics.Fnt, FontMetrics.clr, "LEFT")
+		#End If
+		
 		
 		#if B4A		
 		Dim bmp As B4XBitmap = cvs.CreateBitmap

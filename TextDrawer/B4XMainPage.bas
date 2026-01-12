@@ -39,8 +39,8 @@ Private Sub B4XPage_Created (Root1 As B4XView)
 	Dim options As TextDrawingOptions
 	options.Initialize
 	options.defaultColor = xui.Color_Black
-	options.defaultStrokeColor = xui.Color_Blue
-	options.horizontal = True
+	'options.defaultStrokeColor = xui.Color_Blue
+	options.horizontal = False
 	
 	options.kerningEnabled = True
 	If options.horizontal Then
@@ -56,7 +56,7 @@ Private Sub B4XPage_Created (Root1 As B4XView)
 	options.minFontSize = 15
     Dim drawer As TextDrawer
 	drawer.Initialize(p)
-	Dim bm As B4XBitmap = drawer.Draw("Stroked text.",150dip,200dip,options)
+	Dim bm As B4XBitmap = drawer.Draw("竖排文本",150dip,200dip,options)
 	Log(bm.Width)
 	Log(bm.Height)
 	

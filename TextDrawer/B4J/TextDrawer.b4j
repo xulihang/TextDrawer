@@ -14,13 +14,14 @@ Module1=|relative|..\B4XMainPage
 Module2=|relative|..\BBCodeParser
 Module3=|relative|..\BBCodeView
 Module4=|relative|..\BCTextEngine
-Module5=|relative|..\SimpleBBCodeParser
-Module6=|relative|..\TextDrawer
-Module7=|relative|..\Utils
-Module8=|relative|..\VerticalTextEngine
+Module5=|relative|..\EnumClass
+Module6=|relative|..\SimpleBBCodeParser
+Module7=|relative|..\TextDrawer
+Module8=|relative|..\Utils
+Module9=|relative|..\VerticalTextEngine
 NumberOfFiles=1
 NumberOfLibraries=7
-NumberOfModules=8
+NumberOfModules=9
 Version=10
 @EndOfDesignText@
 #Region Project Attributes 
