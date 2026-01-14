@@ -50,7 +50,7 @@ Private Sub B4XPage_Created (Root1 As B4XView)
 	End If
 	options.linespace = -1
 	options.wordwrap = True
-	options.defaultFont = xui.CreateDefaultFont(15)
+	options.defaultFont = xui.CreateDefaultFont(50)
 	options.fitText = True
 	options.maxFontSize = 100
 	options.minFontSize = 15

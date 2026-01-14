@@ -45,16 +45,21 @@ Public Sub Draw(text As String, width As Double,height As Double,options As Text
 					f = xui.CreateFont(options.defaultFont.ToNativeFont,f.Size - 1)
 					desiredWidth = calculateMinimumWidth(textForCalculation,f)
 				Else
-					width = desiredWidth
+					width = Max(width,desiredWidth)
 					Exit
 				End If
 			Loop
+
 			options.defaultFont = f
 			img = DrawImpl(text, width,height, options)
 		End If
 		
 		Return img
 	Else
+		Dim f As B4XFont
+		f = options.defaultFont
+		Dim desiredWidth As Int = calculateMinimumWidth(text,f)
+		width = Max(width,desiredWidth)
 		Return DrawImpl(text, width,height, options)
 	End If
 End Sub
@@ -65,7 +70,7 @@ private Sub calculateMinimumWidth(s As String,f As B4XFont) As Int
 	Dim c As B4XCanvas
 	c.Initialize(mBase)
 	For Each word As String In Regex.Split(" ",s)
-		maxWordWidth = Max(c.MeasureText(word&" ",f).Width,maxWordWidth)
+		maxWordWidth = Max(c.MeasureText("m"&word&"m",f).Width,maxWordWidth)
 	Next
 	Return maxWordWidth
 End Sub
